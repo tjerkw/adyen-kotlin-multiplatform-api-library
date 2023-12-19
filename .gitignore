@@ -1,0 +1,9 @@
+target
+docs
+.gradle
+.DS_Store
+.openapi-generator
+build
+.idea
+.README-tmp.md
+kotlin-js-store
