@@ -67,7 +67,7 @@ disputes: spec=DisputeService-v30
 disputes: smallServiceName=DisputesApi
 
 $(modelGen): target/spec $(openapi-generator-jar)
-	#rm -rf $(models)/$@ $(output)
+	rm -rf $(models)/$@ $(output)
 	$(openapi-generator-cli) generate \
 		-i target/spec/json/$(spec).json \
 		-g $(generator) \
@@ -97,8 +97,8 @@ bigServices:=balanceplatform checkout payout management legalentitymanagement tr
 services: $(bigServices)
 
 $(bigServices): target/spec $(openapi-generator-jar)
-	#rm -rf $(models)/$@ $(output)
-	#rm -rf src/commonMain/kotlin/com/adyen/service/$@ $(output)
+	rm -rf $(models)/$@ $(output)
+	rm -rf src/commonMain/kotlin/com/adyen/service/$@ $(output)
 	$(openapi-generator-cli) generate \
 		-i target/spec/json/$(spec).json \
 		-g $(generator) \
