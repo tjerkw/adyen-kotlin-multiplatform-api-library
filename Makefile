@@ -8,20 +8,21 @@ generator:=kotlin
 library:=multiplatform
 modelGen:=acswebhooks balancecontrol balanceplatform binlookup checkout dataprotection legalentitymanagement management payment payout posterminalmanagement recurring transfers storedvalue configurationwebhooks reportwebhooks transferwebhooks managementwebhooks disputes transactionwebhooks
 models:=src/commonMain/kotlin/com/adyen/model
-output:=.
+output:=target
 
 
 # Generate models (for each service)
 models: prework $(modelGen) postwork
 
 prework:
-	rm README.md
+	rm -f README.md
 	cp README.top.md .README-tmp.md
 
 postwork:
 	mv .README-tmp.md README.md
-	rm .README-tmp.md
 	rm -fr docs # We dont need the docs folder
+	rm -f settings.gradle
+	rm -f build.gradle
 
 balancecontrol: spec=BalanceControlService-v1
 balancecontrol: smallServiceName=BalanceControlApi
@@ -83,17 +84,17 @@ $(modelGen): target/spec $(openapi-generator-jar)
 		--global-property modelTests=false \
 		--inline-schema-name-mappings PaymentRequest_paymentMethod=CheckoutPaymentMethod \
 		--inline-schema-name-mappings DonationPaymentRequest_paymentMethod=DonationPaymentMethod \
-		--additional-properties=dateLibrary=java8 \
-		--additional-properties=openApiNullable=false \
+		--additional-properties=dateLibrary=kotlinx-datetime \
+		--additional-properties=enumPropertyNaming=PascalCase \
+		--additional-properties=groupId=com.adyen.kotlin \
 		--additional-properties=resourceClass=$(resourceClass)Resource
-	#mv $(output)/$(models)/$@ $(models)/$@
-	#mv $(output)/$(models)/JSON.java $(models)/$@
+	mkdir -p $(models)/$@
+	mv $(output)/$(models)/$@ $(models)
 
 # Full service + models automation
-bigServices:=balanceplatform checkout payout management legalentitymanagement transfers
-singleFileServices:=balancecontrol binlookup dataprotection storedvalue posterminalmanagement recurring payment disputes
+bigServices:=balanceplatform checkout payout management legalentitymanagement transfers balancecontrol binlookup dataprotection storedvalue posterminalmanagement recurring payment disputes
 
-services: $(bigServices) $(singleFileServices)
+services: $(bigServices)
 
 $(bigServices): target/spec $(openapi-generator-jar)
 	#rm -rf $(models)/$@ $(output)
@@ -115,38 +116,12 @@ $(bigServices): target/spec $(openapi-generator-jar)
 		--global-property modelTests=false \
 		--inline-schema-name-mappings PaymentRequest_paymentMethod=CheckoutPaymentMethod \
 		--inline-schema-name-mappings DonationPaymentRequest_paymentMethod=DonationPaymentMethod \
-		--additional-properties=dateLibrary=java8 \
-		--additional-properties=openApiNullable=false
-	#mv $(output)/$(models)/$@ $(models)/$@
-	cat $(output)/README.md >> ./.README-tmp.md
+		--additional-properties=dateLibrary=kotlinx-datetime \
+		--additional-properties=enumPropertyNaming=PascalCase \
+		--additional-properties=groupId=com.adyen.kotlin \
 
-$(singleFileServices): target/spec $(openapi-generator-jar)
-	jq -e 'del(.paths[][].tags)' target/spec/json/$(spec).json > target/spec/json/$(spec).tmp
-	mv target/spec/json/$(spec).tmp target/spec/json/$(spec).json 
-	#rm -rf $(models)/$@ $(output)
-	#rm -rf src/commonMain/kotlin/com/adyen/service/$@ $(output)
-	$(openapi-generator-cli) generate \
-		-i target/spec/json/$(spec).json \
-		-g $(generator) \
-		#-c templates/libraries/jersey3/config.yaml \
-		-o $(output) \
-		--reserved-words-mappings configuration=configuration \
-		--ignore-file-override ./.openapi-generator-ignore \
-		--skip-validate-spec \
-		--model-package $(subst /,.,com.adyen.model.$@) \
-		--package-name com.adyen.client \
-		--library $(library) \
-		--artifact-id $(artifactId) \
-		--additional-properties customApi=$@ \
-		--api-package com.adyen.service \
-		--global-property modelDocs=false \
-		--global-property modelTests=false \
-		--inline-schema-name-mappings PaymentRequest_paymentMethod=CheckoutPaymentMethod \
-		--inline-schema-name-mappings DonationPaymentRequest_paymentMethod=DonationPaymentMethod \
-		--additional-properties=dateLibrary=java8 \
-		--additional-properties=openApiNullable=false \
-		--additional-properties=smallServiceName=$(smallServiceName)
-	#mv $(output)/$(models)/$@ $(models)/$@
+	mkdir -p $(models)/$@
+	mv $(output)/$(models)/$@ $(models)
 	cat $(output)/README.md >> ./.README-tmp.md
 
 # Checkout spec (and patch version)
