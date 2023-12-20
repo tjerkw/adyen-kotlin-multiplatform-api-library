@@ -8,7 +8,8 @@ generator:=kotlin
 library:=multiplatform
 modelGen:=acswebhooks balancecontrol balanceplatform binlookup checkout dataprotection legalentitymanagement management payment payout posterminalmanagement recurring transfers storedvalue configurationwebhooks reportwebhooks transferwebhooks managementwebhooks disputes transactionwebhooks
 models:=src/commonMain/kotlin/com/adyen/model
-output:=target
+services:=src/commonMain/kotlin/com/adyen/service
+output:=target/out
 
 
 # Generate models (for each service)
@@ -17,6 +18,8 @@ models: prework $(modelGen) postwork
 prework:
 	rm -f README.md
 	cp README.top.md .README-tmp.md
+	rm -fr $(models)
+	rm -fr $(services)
 
 postwork:
 	mv .README-tmp.md README.md
@@ -98,7 +101,7 @@ services: $(bigServices)
 
 $(bigServices): target/spec $(openapi-generator-jar)
 	rm -rf $(models)/$@ $(output)
-	rm -rf src/commonMain/kotlin/com/adyen/service/$@ $(output)
+	rm -rf $(services)/$@ $(output)
 	$(openapi-generator-cli) generate \
 		-i target/spec/json/$(spec).json \
 		-g $(generator) \
@@ -120,8 +123,11 @@ $(bigServices): target/spec $(openapi-generator-jar)
 		--additional-properties=enumPropertyNaming=PascalCase \
 		--additional-properties=groupId=com.adyen.kotlin \
 
+	echo BIGSERVICES $@
 	mkdir -p $(models)/$@
+	mkdir -p $(services)/$@
 	mv $(output)/$(models)/$@ $(models)
+	mv $(output)/$(services)/$@ $(services)
 	cat $(output)/README.md >> ./.README-tmp.md
 
 # Checkout spec (and patch version)
@@ -145,6 +151,8 @@ clean:
 	rm -rf $(output)
 	git checkout $(models)
 	git clean -f -d $(models)
+	git checkout $(services)
+	git clean -f -d $(services)
 
 
 .PHONY: templates models $(services)
