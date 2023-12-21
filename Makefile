@@ -22,10 +22,12 @@ prework:
 	rm -fr $(services)
 
 postwork:
-	mv .README-tmp.md README.md
 	rm -fr docs # We dont need the docs folder
 	rm -f settings.gradle
 	rm -f build.gradle
+	# No clue why the template generates this file, its not needed
+	rm -f src/commonMain/kotlin/com/adyen/model/management/com.adyen.client.infrastructure.OctetByteArray.kt
+	mv .README-tmp.md README.md
 
 balancecontrol: spec=BalanceControlService-v1
 balancecontrol: smallServiceName=BalanceControlApi
