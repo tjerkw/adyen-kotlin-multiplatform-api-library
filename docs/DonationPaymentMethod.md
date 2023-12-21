@@ -1,0 +1,45 @@
+
+# DonationPaymentMethod
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**applePayToken** | **kotlin.String** | The stringified and base64 encoded &#x60;paymentData&#x60; you retrieved from the Apple framework. | 
+**googlePayToken** | **kotlin.String** | The &#x60;token&#x60; that you obtained from the [Google Pay API](https://developers.google.com/pay/api/web/reference/response-objects#PaymentData) &#x60;PaymentData&#x60; response. | 
+**issuer** | **kotlin.String** | The iDEAL issuer value of the shopper&#39;s selected bank. Set this to an **id** of an iDEAL issuer to preselect it. | 
+**checkoutAttemptId** | **kotlin.String** | The checkout attempt identifier. |  [optional]
+**fundingSource** | [**inline**](#FundingSource) | The funding source that should be used when multiple sources are available. For Brazilian combo cards, by default the funding source is credit. To use debit, set this value to **debit**. |  [optional]
+**recurringDetailReference** | **kotlin.String** | This is the &#x60;recurringDetailReference&#x60; returned in the response when you created the token. |  [optional]
+**storedPaymentMethodId** | **kotlin.String** | This is the &#x60;recurringDetailReference&#x60; returned in the response when you created the token. |  [optional]
+**type** | [**inline**](#Type) | **paywithgoogle** |  [optional]
+**brand** | **kotlin.String** | Secondary brand of the card. For example: **plastix**, **hmclub**. |  [optional]
+**cupsecureplusSmscode** | **kotlin.String** |  |  [optional]
+**cvc** | **kotlin.String** | The card verification code. Only collect raw card data if you are [fully PCI compliant](https://docs.adyen.com/development-resources/pci-dss-compliance-guide). |  [optional]
+**encryptedCardNumber** | **kotlin.String** | The encrypted card number. |  [optional]
+**encryptedExpiryMonth** | **kotlin.String** | The encrypted card expiry month. |  [optional]
+**encryptedExpiryYear** | **kotlin.String** | The encrypted card expiry year. |  [optional]
+**encryptedSecurityCode** | **kotlin.String** | The encrypted card verification code. |  [optional]
+**expiryMonth** | **kotlin.String** | The card expiry month. Only collect raw card data if you are [fully PCI compliant](https://docs.adyen.com/development-resources/pci-dss-compliance-guide). |  [optional]
+**expiryYear** | **kotlin.String** | The card expiry year. Only collect raw card data if you are [fully PCI compliant](https://docs.adyen.com/development-resources/pci-dss-compliance-guide). |  [optional]
+**holderName** | **kotlin.String** | The name of the card holder. |  [optional]
+**networkPaymentReference** | **kotlin.String** | The network token reference. This is the [&#x60;networkTxReference&#x60;](https://docs.adyen.com/api-explorer/#/CheckoutService/latest/post/payments__resParam_additionalData-ResponseAdditionalDataCommon-networkTxReference) from the response to the first payment. |  [optional]
+**number** | **kotlin.String** | The card number. Only collect raw card data if you are [fully PCI compliant](https://docs.adyen.com/development-resources/pci-dss-compliance-guide). |  [optional]
+**shopperNotificationReference** | **kotlin.String** | The &#x60;shopperNotificationReference&#x60; returned in the response when you requested to notify the shopper. Used only for recurring payments in India. |  [optional]
+**threeDS2SdkVersion** | **kotlin.String** | Required for mobile integrations. Version of the 3D Secure 2 mobile SDK. |  [optional]
+
+
+<a name="FundingSource"></a>
+## Enum: fundingSource
+Name | Value
+---- | -----
+fundingSource | credit, debit
+
+
+<a name="Type"></a>
+## Enum: type
+Name | Value
+---- | -----
+type | paywithgoogle
+
+
+
