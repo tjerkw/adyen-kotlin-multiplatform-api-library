@@ -1,5 +1,4 @@
 target
-docs
 .gradle
 .DS_Store
 .openapi-generator

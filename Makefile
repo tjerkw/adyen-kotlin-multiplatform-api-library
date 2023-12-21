@@ -15,16 +15,13 @@ output:=target/out
 # Generate models (for each service)
 models: prework $(modelGen) postwork
 
-prework:
+prework: clean
 	rm -f README.md
 	cp README.top.md .README-tmp.md
 	rm -fr $(models)
 	rm -fr $(services)
 
 postwork:
-	rm -fr docs # We dont need the docs folder
-	rm -f settings.gradle
-	rm -f build.gradle
 	# No clue why the template generates this file, its not needed
 	rm -f src/commonMain/kotlin/com/adyen/model/management/com.adyen.client.infrastructure.OctetByteArray.kt
 	mv .README-tmp.md README.md
@@ -73,6 +70,7 @@ disputes: smallServiceName=DisputesApi
 
 $(modelGen): target/spec $(openapi-generator-jar)
 	rm -rf $(models)/$@ $(output)
+	rm -rf $(output)/docs
 	$(openapi-generator-cli) generate \
 		-i target/spec/json/$(spec).json \
 		-g $(generator) \
@@ -85,7 +83,7 @@ $(modelGen): target/spec $(openapi-generator-jar)
 		--package-name com.adyen.client \
 		--library $(library) \
 		--artifact-id $(artifactId) \
-		--global-property modelDocs=false \
+		--global-property modelDocs=true \
 		--global-property modelTests=false \
 		--inline-schema-name-mappings PaymentRequest_paymentMethod=CheckoutPaymentMethod \
 		--inline-schema-name-mappings DonationPaymentRequest_paymentMethod=DonationPaymentMethod \
@@ -95,6 +93,7 @@ $(modelGen): target/spec $(openapi-generator-jar)
 		--additional-properties=resourceClass=$(resourceClass)Resource
 	mkdir -p $(models)/$@
 	mv $(output)/$(models)/$@ $(models)
+	mv $(output)/docs/* ./docs
 
 # Full service + models automation
 bigServices:=balanceplatform checkout payout management legalentitymanagement transfers balancecontrol binlookup dataprotection storedvalue posterminalmanagement recurring payment disputes
@@ -104,6 +103,7 @@ services: $(bigServices)
 $(bigServices): target/spec $(openapi-generator-jar)
 	rm -rf $(models)/$@ $(output)
 	rm -rf $(services)/$@ $(output)
+	rm -rf $(output)/docs
 	$(openapi-generator-cli) generate \
 		-i target/spec/json/$(spec).json \
 		-g $(generator) \
@@ -117,7 +117,7 @@ $(bigServices): target/spec $(openapi-generator-jar)
 		--library $(library) \
 		--artifact-id $(artifactId) \
 		--api-package com.adyen.service.$@ \
-		--global-property modelDocs=false \
+		--global-property modelDocs=true \
 		--global-property modelTests=false \
 		--inline-schema-name-mappings PaymentRequest_paymentMethod=CheckoutPaymentMethod \
 		--inline-schema-name-mappings DonationPaymentRequest_paymentMethod=DonationPaymentMethod \
@@ -130,6 +130,7 @@ $(bigServices): target/spec $(openapi-generator-jar)
 	mkdir -p $(services)/$@
 	mv $(output)/$(models)/$@ $(models)
 	mv $(output)/$(services)/$@ $(services)
+	mv $(output)/docs/* ./docs
 	cat $(output)/README.md >> ./.README-tmp.md
 
 # Checkout spec (and patch version)
