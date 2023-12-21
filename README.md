@@ -6,7 +6,9 @@ To regenerate, call:
 
 ```
 make models
-```# com.adyen.client - Kotlin client library for Adyen Balance Control API
+```
+
+# com.adyen.client - Kotlin client library for Adyen Balance Control API
 
 ## Requires
 
